@@ -2,6 +2,10 @@
 resources/papers/**
 data/models/**
 
+data/real_power/MW_Staplegrove_CB905_MW_minute_real_power_MW_pre_august.csv
+data/real_power/MW_Mousehole_CB51_MW_minute_real_power_MW.csv
+data/real_power/MW_Geevor_CB52_MW_minute_real_power_MW.csv
+
 # Hidden and temp
 *.bak
 .gitattributes
