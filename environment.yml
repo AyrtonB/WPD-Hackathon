@@ -1,0 +1,34 @@
+name: evtdemand
+
+channels:
+  - conda-forge
+  - fastai
+  
+dependencies:
+  - python>=3.7
+  - pandas
+  - matplotlib
+  - jupyterlab
+  - seaborn
+  - mkdocs
+  - mkdocs-material
+  - python-dotenv
+  - lxml
+  - scikit-learn
+#   - scikit-optimize # currently installing from Git due to old plotting error in the conda install
+  - mlxtend
+  - geopandas
+  - typer
+  - pip
+  
+  - pip:
+      - -e .
+      - nbdev
+      - moepy
+      - tqdm
+      - feautils
+      - mkdocs-material-extensions
+      - mkdocstrings
+      - configparser
+      - junix
+      - git+https://github.com/scikit-optimize/scikit-optimize.git
