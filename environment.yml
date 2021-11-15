@@ -16,6 +16,7 @@ dependencies:
   - lxml
   - scikit-learn
 #   - scikit-optimize # currently installing from Git due to old plotting error in the conda install
+  - lightgbm
   - mlxtend
   - geopandas
   - typer
