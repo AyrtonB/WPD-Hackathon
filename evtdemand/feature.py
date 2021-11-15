@@ -104,7 +104,7 @@ def create_prev_month_stats_df(df_features: pd.DataFrame, df_target: pd.DataFram
 # Cell
 def create_additional_features(
     df_features: pd.DataFrame,
-    df_target: pd.DataFrame,
+    df_target: pd.DataFrame=None,
     features: list=['temporal', 'dir_speed', 'hcdh', 'prev_month_stats']
 ):
     if 'temporal' in features:
@@ -117,6 +117,7 @@ def create_additional_features(
         df_features = df_features.merge(create_hcdh_features(df_features), left_index=True, right_index=True)
 
     if 'prev_month_stats' in features:
+        assert df_target is not None
         df_features = df_features.merge(create_prev_month_stats_df(df_features, df_target), left_index=True, right_index=True)
 
     df_features = df_features.dropna()

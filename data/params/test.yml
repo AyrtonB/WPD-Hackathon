@@ -1,0 +1,31 @@
+data_dir: ../data
+model_1: sklearn.ensemble.RandomForestRegressor
+model_2: sklearn.ensemble.RandomForestRegressor
+model_1_kwargs: {}
+model_2_kwargs: {}
+data_kwargs:
+  real_power_sub_dir: real_power
+  weather_sub_dir: weather
+  real_power_time_period: _pre_august
+  real_power_site: Staplegrove_CB905
+  weather_grid_point: staplegrove_1
+  weather_interpolate_method: interpolate
+y1_col: value_max
+y2_col: value_min
+split_kwargs:
+  n_splits: 2
+  shuffle: false
+cols_subset:
+- value
+- temperature
+- solar_irradiance
+- pressure
+- spec_humidity
+- hour
+- windspeed_north
+- windspeed_east
+- doy
+- speed
+- direction
+- weekend
+- hcdh

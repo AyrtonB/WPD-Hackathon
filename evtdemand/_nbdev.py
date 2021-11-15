@@ -22,7 +22,9 @@ index = {"clean_real_power_df": "01-data-processing.ipynb",
          "calculate_error_metrics": "04-model-suite.ipynb",
          "ModelSuite": "04-model-suite.ipynb",
          "load_module_attr": "04-model-suite.ipynb",
-         "run_parameterised_model": "04-model-suite.ipynb"}
+         "run_parameterised_model": "04-model-suite.ipynb",
+         "save_params": "04-model-suite.ipynb",
+         "load_params": "04-model-suite.ipynb"}
 
 modules = ["data.py",
            "spatial.py",
