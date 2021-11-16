@@ -77,7 +77,12 @@ class ModelSuite:
         X: np.ndarray,
         y1: np.ndarray,
         y2: np.ndarray,
+        shuffle=True,
     ):
+        if shuffle == True:
+            shuffler = np.random.permutation(X.shape[0])
+            X, y1, y2 = X[shuffler], y1[shuffler], y2[shuffler]
+
         self.model_1.fit(X, y1)
         self.model_2.fit(X, y2)
 
@@ -197,7 +202,7 @@ def run_parameterised_model(
                        'spec_humidity', 'hour', 'windspeed_north', 'windspeed_east',
                        'doy', 'speed', 'direction', 'weekend', 'hcdh'],
     features_kwargs: dict={
-        'features': ['temporal', 'dir_speed', 'hcdh']
+        'features': ['temporal', 'dir_speed', 'hcdh', 'lagged']
     }
 ):
     input_data = locals()
