@@ -174,8 +174,8 @@ def load_module_attr(module_attr_path: str):
 
 def run_parameterised_model(
     data_dir: str='data',
-    model_1: str='sklearn.ensemble.RandomForestRegressor', # these can be any sklearn compatible model
-    model_2: str='sklearn.ensemble.RandomForestRegressor',
+    model_1: str='lightgbm.LGBMRegressor', # these can be any sklearn compatible model
+    model_2: str='lightgbm.LGBMRegressor',
     model_1_kwargs: dict={},
     model_2_kwargs: dict={},
     data_kwargs: dict={

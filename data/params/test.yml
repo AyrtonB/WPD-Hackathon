@@ -1,6 +1,6 @@
 data_dir: ../data
-model_1: sklearn.ensemble.RandomForestRegressor
-model_2: sklearn.ensemble.RandomForestRegressor
+model_1: lightgbm.LGBMRegressor
+model_2: lightgbm.LGBMRegressor
 model_1_kwargs: {}
 model_2_kwargs: {}
 data_kwargs:
@@ -29,3 +29,8 @@ cols_subset:
 - direction
 - weekend
 - hcdh
+features_kwargs:
+  features:
+  - temporal
+  - dir_speed
+  - hcdh
