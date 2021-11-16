@@ -153,6 +153,7 @@ class ModelSuite:
         X_submission = df_submission_features.values
         submission_index = df_submission_features.index
 
+        # should shuffle indexes before doing this
         self.fit_models(X_train, y1_train, y2_train)
         y1_submission, y2_submission = self.predict_models(X_submission)
 
@@ -189,7 +190,7 @@ def run_parameterised_model(
     y1_col: str='value_max',
     y2_col: str='value_min',
     split_kwargs: dict={
-        'test_size': 0.1,
+        'n_splits': 5,
         'shuffle': False
     },
     cols_subset: list=['value', 'temperature', 'solar_irradiance', 'pressure',

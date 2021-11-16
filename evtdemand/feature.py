@@ -45,6 +45,7 @@ def create_temporal_features(df_features: pd.DataFrame):
     df_temporal = pd.DataFrame({
         # 'SP': df_dates_SPs['SP'].values,
         'hour': df_features.index.hour + df_features.index.minute/60,
+        'local_hour': df_features.index.tz_convert('Europe/London').hour + df_features.index.tz_convert('Europe/London').minute/60,
         'doy': df_features.index.dayofyear,
         'weekend': df_features.index.dayofweek.isin([5, 6])
     }, index=df_features.index)
