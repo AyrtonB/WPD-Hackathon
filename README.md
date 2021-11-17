@@ -1,6 +1,6 @@
 # WPD-Hackathon
 
-This repository includes the workflow used by the UCL team for submissions to the Western Power Distribition Data Science competition.
+This repository includes the workflow used for submissions to the Western Power Distribition Data Science competition.
 
 <br>
 <br>
