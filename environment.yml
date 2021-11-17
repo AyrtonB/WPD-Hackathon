@@ -21,6 +21,7 @@ dependencies:
   - mlxtend
   - geopandas
   - typer
+  - pytest
   - pip
   
   - pip:

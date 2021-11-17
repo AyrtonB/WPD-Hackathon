@@ -25,12 +25,14 @@ index = {"clean_real_power_df": "01-data-processing.ipynb",
          "load_module_attr": "04-model-suite.ipynb",
          "run_parameterised_model": "04-model-suite.ipynb",
          "save_params": "04-model-suite.ipynb",
-         "load_params": "04-model-suite.ipynb"}
+         "load_params": "04-model-suite.ipynb",
+         "test_parameterised_model": "07-testing.ipynb"}
 
 modules = ["data.py",
            "spatial.py",
            "feature.py",
-           "suite.py"]
+           "suite.py",
+           "test.py"]
 
 doc_url = "https://AyrtonB.github.io/WPD-Hackathon/"
 
