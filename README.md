@@ -81,4 +81,4 @@ notebook2script()
 
 ### Potential Further Research Questions
 
-* 
+* How does the model improve when we can use lagged variables from the previous week or day
