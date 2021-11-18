@@ -75,7 +75,8 @@ def construct_baseline_features_target_dfs(
     real_power_time_period: str='_pre_august',
     real_power_site: str='Staplegrove_CB905',
     weather_grid_point: str='staplegrove_1',
-    weather_interpolate_method: str='interpolate'
+    weather_interpolate_method: str='interpolate',
+    use_target_delta: bool=False
 ):
     df_observation = load_real_power_dataset(f'{data_dir}/{real_power_sub_dir}', site=real_power_site, real_power_variable='observation_variable_half_hourly', time_period=real_power_time_period)
     df_target = load_real_power_dataset(f'{data_dir}/{real_power_sub_dir}', site=real_power_site, real_power_variable='target_variable_half_hourly_max_min', time_period=real_power_time_period)
@@ -86,5 +87,9 @@ def construct_baseline_features_target_dfs(
     df_features = df_observation.loc[common_idxs].copy()
     df_features[df_weather.columns] = df_weather.loc[common_idxs].copy()
     df_target = df_target.loc[common_idxs]
+
+    if use_target_delta == True:
+        assert 'value' in df_features.columns
+        df_target = df_target.subtract(df_features['value'], axis=0)
 
     return df_features, df_target

@@ -3,7 +3,6 @@
 __all__ = ['test_parameterised_model']
 
 # Cell
-
 import os
 import pytest
 

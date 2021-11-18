@@ -7,7 +7,7 @@ This repository includes the workflow used for submissions to the Western Power 
 
 ### Installation
 
-You can install the battery optimisation library developed in this work using:
+You can install the library developed in this work using:
 
 ```bash
 pip install evtdemand
