@@ -106,11 +106,22 @@ class ModelSuite:
         self,
         y1_pred: np.ndarray,
         y2_pred: np.ndarray,
-        index: pd.Index
+        index: pd.Index,
+        df_features: pd.DataFrame
     ):
         df_pred = pd.DataFrame({'value_max': y1_pred, 'value_min': y2_pred}, index=index)
         df_pred.index.name = 'time'
         df_pred.index = index.tz_convert(None)
+
+        # handling invalid values
+        invalid_max_idxs = df_pred.index[~(df_features['value'].values < df_pred['value_max'].values)]
+        invalid_min_idxs = df_pred.index[~(df_features['value'].values > df_pred['value_min'].values)]
+
+        if len(invalid_max_idxs) > 0:
+            df_pred.loc[invalid_max_idxs, 'value_max'] = df_features.loc[invalid_max_idxs.tz_localize('UTC'), 'value']
+
+        if len(invalid_min_idxs) > 0:
+            df_pred.loc[invalid_min_idxs, 'value_min'] = df_features.loc[invalid_min_idxs.tz_localize('UTC'), 'value']
 
         return df_pred
 
@@ -143,7 +154,7 @@ class ModelSuite:
                 y1_pred += y_baseline_test
                 y2_pred += y_baseline_test
 
-            df_pred = df_pred.append(self.construct_prediction_df(y1_pred, y2_pred, df_features.index[test_index]).assign(observed=y_baseline_test))
+            df_pred = df_pred.append(self.construct_prediction_df(y1_pred, y2_pred, df_features.index[test_index], df_features.iloc[test_index]).assign(observed=y_baseline_test))
             error_metrics += [calculate_error_metrics(y1_test, y2_test, y1_pred, y2_pred, y_baseline_test)]
 
         df_pred = df_pred.sort_index()
@@ -171,12 +182,16 @@ class ModelSuite:
         self.fit_models(X_train, y1_train, y2_train)
         y1_submission, y2_submission = self.predict_models(X_submission)
 
-        df_pred = self.construct_prediction_df(y1_submission, y2_submission, submission_index)
+        df_pred = self.construct_prediction_df(y1_submission, y2_submission, submission_index, df_submission_features)
 
         if use_target_delta == True:
             assert 'value' in df_submission_features.columns
             df_pred = df_pred.add(df_submission_features['value'], axis=0)
 
+        # handling invalid predictions
+
+
+        # saving
         if save_submission == True:
             df_pred.to_csv(f'{submissions_dir}/predictions.csv')
             df_pred.to_csv(f'{submissions_dir}/archive/predictions_{pd.Timestamp.now().strftime("%Y-%m-%d %H-%M-%S")}.csv')
