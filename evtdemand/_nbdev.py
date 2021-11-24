@@ -4,11 +4,14 @@ __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"clean_real_power_df": "01-data-processing.ipynb",
          "load_real_power_dataset": "01-data-processing.ipynb",
+         "load_datetime_df": "01-data-processing.ipynb",
          "load_weather_df": "01-data-processing.ipynb",
          "construct_baseline_features_target_dfs": "01-data-processing.ipynb",
          "dt_rng_to_SPs": "03a-feature-generation.ipynb",
          "create_temporal_features": "03a-feature-generation.ipynb",
          "create_dir_speed_features": "03a-feature-generation.ipynb",
+         "add_col_suffix": "03a-feature-generation.ipynb",
+         "iterate_feature_gen_over_site_gridpoints": "03a-feature-generation.ipynb",
          "calc_hcdh_factor": "03a-feature-generation.ipynb",
          "create_hcdh_features": "03a-feature-generation.ipynb",
          "create_prev_month_stats_df": "03a-feature-generation.ipynb",
@@ -31,7 +34,7 @@ index = {"clean_real_power_df": "01-data-processing.ipynb",
          "visualise_errors": "04-model-suite.ipynb",
          "save_params": "04-model-suite.ipynb",
          "load_params": "04-model-suite.ipynb",
-         "test_parameterised_model": "07-testing.ipynb"}
+         "test_parameterised_model": "08-testing.ipynb"}
 
 modules = ["data.py",
            "feature.py",

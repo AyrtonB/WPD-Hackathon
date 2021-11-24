@@ -219,7 +219,8 @@ def run_parameterised_model(
         'weather_sub_dir': 'weather',
         'real_power_time_period': '_pre_august',
         'real_power_site': 'Staplegrove_CB905',
-        'weather_grid_point': 'staplegrove_1',
+        'weather_sites': ['staplegrove'],
+        'weather_grid_points': [1],
         'weather_interpolate_method': 'interpolate',
         'use_target_delta': False
     },
@@ -229,11 +230,14 @@ def run_parameterised_model(
         'n_splits': 5,
         'shuffle': False
     },
-    cols_subset: list=['value', 'temperature', 'solar_irradiance', 'pressure',
-                       'spec_humidity', 'hour', 'windspeed_north', 'windspeed_east',
-                       'doy', 'speed', 'direction', 'weekend', 'hcdh'],
+    cols_subset: list=['value', 'temperature_staplegrove_1', 'solar_irradiance_staplegrove_1', 'windspeed_north_staplegrove_1',
+                       'windspeed_east_staplegrove_1', 'pressure_staplegrove_1', 'spec_humidity_staplegrove_1', 'hour', 'doy',
+                       'weekend', 'direction_staplegrove_1', 'speed_staplegrove_1', 'hcdh_staplegrove_1'],
     features_kwargs: dict={
-        'features': ['temporal', 'dir_speed', 'hcdh', 'lagged']
+        'features': ['temporal', 'dir_speed', 'hcdh', 'lagged'],
+        'sites': ['staplegrove'],
+        'grid_points': [1]
+
     }
 ):
     input_data = locals()
