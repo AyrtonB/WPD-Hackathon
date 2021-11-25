@@ -114,8 +114,12 @@ class ModelSuite:
             shuffler = np.random.permutation(X.shape[0])
             X, y1, y2 = X[shuffler], y1[shuffler], y2[shuffler]
 
-        self.model_1.fit(X, y1)
-        self.model_2.fit(X, y2)
+        if self.model_2 is not None:
+            self.model_1.fit(X, y1)
+            self.model_2.fit(X, y2)
+        else:
+            Y = np.column_stack([y1, y2])
+            self.model_1.fit(X, Y)
 
         self.trained = True
 
@@ -125,8 +129,12 @@ class ModelSuite:
         self,
         X: np.ndarray
     ):
-        y1_pred = self.model_1.predict(X)
-        y2_pred = self.model_2.predict(X)
+        if self.model_2 is not None:
+            y1_pred = self.model_1.predict(X)
+            y2_pred = self.model_2.predict(X)
+        else:
+            Y_pred = self.model_1.predict(X)
+            y1_pred, y2_pred = Y_pred[:, 0], Y_pred[:, 1]
 
         return y1_pred, y2_pred
 
@@ -156,8 +164,7 @@ class ModelSuite:
             y1_pred, y2_pred = self.predict_models(X_test)
 
             if use_target_delta == True:
-                y1_pred += y_baseline_test
-                y2_pred += y_baseline_test
+                y1_pred, y2_pred, y1_test, y2_test = y1_pred+y_baseline_test, y2_pred+y_baseline_test, y1_test+y_baseline_test, y2_test+y_baseline_test
 
             df_pred = df_pred.append(construct_prediction_df(y1_pred, y2_pred, df_features.index[test_index], df_features.iloc[test_index]).assign(value_mean=y_baseline_test))
             error_metrics += [calculate_error_metrics(y1_test, y2_test, y1_pred, y2_pred, y_baseline_test)]
@@ -234,7 +241,7 @@ def run_parameterised_model(
                        'windspeed_east_staplegrove_1', 'pressure_staplegrove_1', 'spec_humidity_staplegrove_1', 'hour', 'doy',
                        'weekend', 'direction_staplegrove_1', 'speed_staplegrove_1', 'hcdh_staplegrove_1'],
     features_kwargs: dict={
-        'features': ['temporal', 'dir_speed', 'hcdh', 'lagged'],
+        'features': ['temporal', 'dir_speed', 'hcdh'],#, 'lagged'],
         'sites': ['staplegrove'],
         'grid_points': [1]
 
@@ -259,7 +266,12 @@ def run_parameterised_model(
         model_2 = load_module_attr(model_2)
 
     # model run
-    model_suite = ModelSuite(model_1(**model_1_kwargs), model_2(**model_2_kwargs))
+    if model_2 is not None:
+        model_1_init, model_2_init = model_1(**model_1_kwargs), model_2(**model_2_kwargs)
+    else:
+        model_1_init, model_2_init = model_1(**model_1_kwargs), None
+
+    model_suite = ModelSuite(model_1_init, model_2_init)
     error_metrics, df_pred = model_suite.run_test(df_target, df_features, y1_col=y1_col, y2_col=y2_col, split_kwargs=split_kwargs, use_target_delta=use_target_delta)
 
     return model_suite, error_metrics, df_pred, input_data

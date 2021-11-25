@@ -23,7 +23,7 @@ plt.rcParams['figure.dpi'] = 600
 #from Utility_functions import *
 
 #%% Load processed data
-data_path = project_dir + '\\data\\processed_data'
+data_path = 'data\\processed_data'
 
 spg_weather_df = pd.read_csv(data_path+'\\weather_staplegrove.csv', 
                          index_col=0, parse_dates = True, dayfirst=True)
@@ -198,4 +198,5 @@ selected = 'RF'
 output = pd.DataFrame(data = np.column_stack((Pred_ub[selected].values, Pred_lb[selected].values)),
                       index = valid_Pred['2021-08-01':].index, columns = ['value_max', 'value_min'])
 
-output.to_csv(project_dir+'\\data\\submission\\akylas\\predictions.csv')
+output.to_csv('data\\submission\\akylas\\predictions.csv')
+Predictors.to_csv('data\\submission\\akylas\\features.csv')
