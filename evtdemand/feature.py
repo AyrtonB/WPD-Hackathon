@@ -268,14 +268,14 @@ def create_solar_features(
 
         feature_stat_params_2 = [
             {
-                'cols': [f'solar_irradiance_{site}_max', f'solar_irradiance_{site}_min'],
+                'cols': [f'solar_irradiance_{site}_max', f'solar_irradiance_{site}_min', f'solar_irradiance_{site}_mean'],
                 'method_1': 'diff',
                 'method_2': None,
                 'method_1_kwargs': {},
                 'method_2_kwargs': {}
             },
             {
-                'cols': [f'solar_irradiance_{site}_max', f'solar_irradiance_{site}_min'],
+                'cols': [f'solar_irradiance_{site}_max', f'solar_irradiance_{site}_min', f'solar_irradiance_{site}_mean'],
                 'method_1': 'ewm',
                 'method_2': 'mean',
                 'method_1_kwargs': {'alpha': 0.9},
@@ -285,6 +285,7 @@ def create_solar_features(
 
 
         df_combined_site_feature_stats_1 = create_combined_feature_stats(df_features, feature_stat_params_1)
+        df_combined_site_feature_stats_1[f'solar_irradiance_{site}_range'] = df_combined_site_feature_stats_1[f'solar_irradiance_{site}_max'] - df_combined_site_feature_stats_1[f'solar_irradiance_{site}_min']
         df_combined_site_feature_stats_2 = create_combined_feature_stats(df_combined_site_feature_stats_1, feature_stat_params_2)
 
         feature_stats_dfs += [pd.concat([df_combined_site_feature_stats_1, df_combined_site_feature_stats_2], axis=1)]
