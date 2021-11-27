@@ -38,7 +38,6 @@ hhour_df = pd.read_csv(data_path+'\\half_hourly_power_staplegrove.csv',
 
 #%% Process weather data from stations
 
-from math import sin
 # Keep only the following variables
 weather_variables = ['temperature', 'solar_irradiance', 'pressure',
                      'spec_humidity', 'speed', 'direction']
@@ -65,7 +64,7 @@ for area in ['staplegrove', 'mousehole']:
     weather_df[area, 'solar_mean_roll'] = weather_df[area, 'solar_mean'].ewm(alpha=0.9).mean()
     
     for i in range(1,6):
-        weather_df[area, 'direction_'+str(i)] = weather_df[area, 'direction_'+str(i)].apply(sin)        
+        weather_df[area, 'direction_'+str(i)] = np.sin(np.deg2rad(weather_df[area, 'direction_'+str(i)]))
 
 #%%
 
@@ -166,7 +165,7 @@ Pred_lb = pd.DataFrame(data=[], index = valid_Pred.index)
 
 #%% Train forecasting model (single model for both directions)
 
-rf_single = RandomForestRegressor(n_estimators = 500)
+rf_single = ExtraTreesRegressor(n_estimators = 1000, n_jobs = -1)
 rf_single.fit(train_Pred, np.column_stack((train_ub_diff, train_lb_diff)))
 
 rf_joint_predictions = rf_single.predict(valid_Pred)
