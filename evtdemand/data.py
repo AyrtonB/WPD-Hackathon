@@ -31,10 +31,16 @@ def load_real_power_dataset(
     real_power_variable: str='minute',
     time_period: str=''
 ):
-    valid_time_periods = ['', '_august', '_pre_august', '_september']
+    valid_time_periods = ['', '_august', '_pre_august', '_september', '_pre_september']
     valid_real_power_variables = ['minute', 'observation_variable_half_hourly', 'target_variable_half_hourly_max_min']
     assert real_power_variable in valid_real_power_variables, f'`real_power_variable` must be one of {", ".join(valid_real_power_variables)}'
     assert time_period in valid_time_periods, f'`time_period` must be one of {", ".join(valid_time_periods)}'
+
+    if time_period == '_pre_september':
+        df_pre_august = load_real_power_dataset(data_dir, site, real_power_variable, '_pre_august')
+        df_august = load_real_power_dataset(data_dir, site, real_power_variable, '_august')
+        df_pre_september = df_pre_august.append(df_august)
+        return df_pre_september
 
     fp = f'{data_dir}/MW_{site}_MW_{real_power_variable}_real_power_MW{time_period}.csv'
 
