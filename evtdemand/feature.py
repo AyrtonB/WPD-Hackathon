@@ -4,7 +4,8 @@ __all__ = ['dt_rng_to_SPs', 'create_temporal_features', 'create_dir_speed_featur
            'iterate_feature_gen_over_site_gridpoints', 'get_grid_points', 'calc_hcdh_factor', 'create_hcdh_features',
            'create_feature_stats', 'create_combined_feature_stats', 'create_demand_stat_features',
            'create_solar_features', 'create_prev_month_stats_df', 'create_lagged_df', 'creat_demand_ts_pcs',
-           'create_rate_of_change_features', 'create_additional_features', 'process_features']
+           'create_rate_of_change_features', 'clean_and_normalise_data', 'process_features',
+           'create_additional_features']
 
 # Cell
 import numpy as np
@@ -367,6 +368,43 @@ def create_rate_of_change_features(
     return df_roc
 
 # Cell
+def clean_and_normalise_data(
+    df_features: pd.DataFrame,
+    df_target: pd.DataFrame,
+    x_mean: np.ndarray,
+    x_std: np.ndarray,
+    y_mean: np.ndarray,
+    y_std: np.ndarray,
+    x_dtype: str='float32',
+    y_dtype: str='float32',
+):
+    df_features = np.asanyarray(df_features).astype(x_dtype)
+    df_target = np.asanyarray(df_target).astype(y_dtype)
+
+    df_features_cleaned = (df_features - x_mean)/x_std
+    df_target_cleaned = (df_target - y_mean)/y_std
+
+    return df_features_cleaned, df_target_cleaned
+
+def process_features(
+    df_features: pd.DataFrame,
+    cols_subset = ['value', 'temperature_staplegrove_1', 'solar_irradiance_staplegrove_1', 'windspeed_north_staplegrove_1',
+                   'windspeed_east_staplegrove_1', 'pressure_staplegrove_1', 'spec_humidity_staplegrove_1', 'hour', 'doy',
+                   'weekend', 'direction_staplegrove_1', 'speed_staplegrove_1', 'hcdh_staplegrove_1'],
+):
+    if cols_subset is None:
+        return df_features
+
+    df_features_processed = df_features.copy()
+
+    common_cols_subset = df_features_processed.columns.intersection(pd.Index(cols_subset))
+    missing_cols = sorted(list(set(cols_subset) - set(common_cols_subset)))
+    assert len(missing_cols)==0, f'The following columns are missing: {", ".join(missing_cols)}'
+
+    df_features_processed = df_features_processed[cols_subset]
+
+    return df_features_processed
+
 def create_additional_features(
     df_features: pd.DataFrame,
     df_target: pd.DataFrame=None,
@@ -380,7 +418,15 @@ def create_additional_features(
     },
     roc_features: dict={
         'value': 3
-    }
+    },
+    x_mean: np.ndarray=None,
+    x_std: np.ndarray=None,
+    y_mean: np.ndarray=None,
+    y_std: np.ndarray=None,
+    x_dtype: str='float32',
+    y_dtype: str='float32',
+    cols_subset: list=None,
+    dropna: bool=True
 ):
     if 'solar' in features:
         df_solar = create_solar_features(df_features, sites=sites, grid_points=grid_points)
@@ -413,23 +459,27 @@ def create_additional_features(
     if 'roc' in features:
         df_features = df_features.merge(create_rate_of_change_features(df_features, roc_features), left_index=True, right_index=True)
 
-    df_features = df_features.dropna()
+    if dropna == True:
+        df_features = df_features.dropna()
 
-    return df_features
+    if x_mean is None:
+        x_mean = np.mean(df_features, axis=0)
+    if x_std is None:
+        x_std = np.std(df_features, axis=0)
 
-# Cell
-def process_features(
-    df_features: pd.DataFrame,
-    cols_subset = ['value', 'temperature_staplegrove_1', 'solar_irradiance_staplegrove_1', 'windspeed_north_staplegrove_1',
-                   'windspeed_east_staplegrove_1', 'pressure_staplegrove_1', 'spec_humidity_staplegrove_1', 'hour', 'doy',
-                   'weekend', 'direction_staplegrove_1', 'speed_staplegrove_1', 'hcdh_staplegrove_1'],
-):
-    if cols_subset is None:
-        return df_features
+    if df_target is not None:
+        if y_mean is None:
+            if isinstance(df_target, pd.Series):
+                y_mean = df_target.mean()
+            else:
+                y_mean = np.mean(df_target, axis=0)
+        if y_std is None:
+            if isinstance(df_target, pd.Series):
+                y_mean = df_target.std()
+            else:
+                y_mean = np.std(df_target, axis=0)
 
-    df_features_processed = df_features.copy()
+    # df_features = clean_and_normalise_data(df_features, df_target, x_mean, x_std, y_mean, y_std, x_dtype, y_dtype)
+    df_features = process_features(df_features, cols_subset=cols_subset)
 
-    common_cols_subset = df_features_processed.columns.intersection(pd.Index(cols_subset))
-    df_features_processed = df_features_processed[common_cols_subset]
-
-    return df_features_processed
+    return df_features, df_target

@@ -19,20 +19,6 @@ y2_col: value_min
 split_kwargs:
   n_splits: 3
   shuffle: false
-cols_subset:
-- value
-- temperature_staplegrove_1
-- solar_irradiance_staplegrove_1
-- windspeed_north_staplegrove_1
-- windspeed_east_staplegrove_1
-- pressure_staplegrove_1
-- spec_humidity_staplegrove_1
-- hour
-- doy
-- weekend
-- direction_staplegrove_1
-- speed_staplegrove_1
-- hcdh_staplegrove_1
 features_kwargs:
   features:
   - temporal
@@ -42,3 +28,17 @@ features_kwargs:
   - staplegrove
   grid_points:
   - 1
+  cols_subset:
+  - value
+  - temperature_staplegrove_1
+  - solar_irradiance_staplegrove_1
+  - windspeed_north_staplegrove_1
+  - windspeed_east_staplegrove_1
+  - pressure_staplegrove_1
+  - spec_humidity_staplegrove_1
+  - hour
+  - doy
+  - weekend
+  - direction_staplegrove_1
+  - speed_staplegrove_1
+  - hcdh_staplegrove_1
