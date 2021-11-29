@@ -8,30 +8,37 @@ data_kwargs:
   weather_sub_dir: weather
   real_power_time_period: _pre_august
   real_power_site: Staplegrove_CB905
-  weather_grid_point: staplegrove_1
+  weather_sites:
+  - staplegrove
+  weather_grid_points:
+  - 1
   weather_interpolate_method: interpolate
   use_target_delta: false
 y1_col: value_max
 y2_col: value_min
 split_kwargs:
-  n_splits: 5
+  n_splits: 3
   shuffle: false
-cols_subset:
-- value
-- temperature
-- solar_irradiance
-- pressure
-- spec_humidity
-- hour
-- windspeed_north
-- windspeed_east
-- doy
-- speed
-- direction
-- weekend
-- hcdh
 features_kwargs:
   features:
   - temporal
   - dir_speed
   - hcdh
+  sites:
+  - staplegrove
+  grid_points:
+  - 1
+  cols_subset:
+  - value
+  - temperature_staplegrove_1
+  - solar_irradiance_staplegrove_1
+  - windspeed_north_staplegrove_1
+  - windspeed_east_staplegrove_1
+  - pressure_staplegrove_1
+  - spec_humidity_staplegrove_1
+  - hour
+  - doy
+  - weekend
+  - direction_staplegrove_1
+  - speed_staplegrove_1
+  - hcdh_staplegrove_1

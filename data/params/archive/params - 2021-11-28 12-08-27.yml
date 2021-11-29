@@ -1,0 +1,57 @@
+data_dir: ../data
+model_1: lightgbm.LGBMRegressor
+model_2: lightgbm.LGBMRegressor
+model_1_kwargs:
+  num_leaves: 50
+  n_estimators: 100
+  reg_lambda: 0.1
+model_2_kwargs:
+  num_leaves: 50
+  n_estimators: 100
+  reg_lambda: 0.1
+data_kwargs:
+  real_power_sub_dir: real_power
+  weather_sub_dir: weather
+  real_power_time_period: _pre_september
+  real_power_site: Staplegrove_CB905
+  weather_sites:
+  - staplegrove
+  weather_grid_points: null
+  weather_interpolate_method: interpolate
+  use_target_delta: false
+y1_col: value_max
+y2_col: value_min
+split_kwargs:
+  n_splits: 5
+  shuffle: false
+cols_subset: null
+features_kwargs:
+  features:
+  - temporal
+  - dir_speed
+  - lagged
+  - demand
+  - solar
+  - roc
+  feature_lags:
+    value:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 48
+    - 96
+    - 336
+    solar_irradiance_staplegrove_1:
+    - 1
+    - 2
+    temperature_staplegrove_1:
+    - 1
+    - 2
+  roc_features:
+    value: 3
+  sites:
+  - staplegrove
+  grid_points: null

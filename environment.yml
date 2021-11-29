@@ -3,6 +3,7 @@ name: evtdemand
 channels:
   - conda-forge
   - fastai
+  - pytorch
   
 dependencies:
   - python>=3.7
@@ -22,6 +23,8 @@ dependencies:
   - geopandas
   - typer
   - pytest
+  - pytorch
+  - skorch
   - pip
   
   - pip:
