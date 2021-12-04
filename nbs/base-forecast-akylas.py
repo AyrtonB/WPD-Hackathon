@@ -137,9 +137,9 @@ Predictors['value_roll_max'] = Predictors['value'].rolling(12).max()
 
 Predictors = Predictors.dropna()
 #%%
-train_stop = '2021-07-31'
+train_stop = '2021-06-30'
 
-valid_start = '2021-08-01'
+valid_start = '2021-07-01'
 valid_stop = '2021-08-31'
 
 train_Pred = Predictors[:train_stop]
@@ -165,7 +165,7 @@ Pred_lb = pd.DataFrame(data=[], index = valid_Pred.index)
 
 #%% Train forecasting model (single model for both directions)
 
-rf_single = ExtraTreesRegressor(n_estimators = 1000, n_jobs = -1)
+rf_single = ExtraTreesRegressor(n_estimators = 500, n_jobs = -1)
 rf_single.fit(train_Pred, np.column_stack((train_ub_diff, train_lb_diff)))
 
 rf_joint_predictions = rf_single.predict(valid_Pred)
@@ -187,14 +187,36 @@ indices = np.argsort(importances)[::-1]
 plt.barh(range(p), importances[indices[:p]], yerr = std[indices[:p]])
 plt.yticks(range(p), train_Pred.columns[indices[:p]])
 plt.show()
+#%%
+selected = 'RF'
+output = pd.DataFrame(data = np.column_stack((Pred_ub[selected].values, Pred_lb[selected].values)),
+                      index = valid_Pred['2021-07-01':].index, columns = ['value_max', 'value_min'])
+
+output.to_csv(project_dir+'\\data\\submission\\akylas\\Predictor1.csv')
 
 #print('Single model: ')
 #print(eval_point_pred(Pred_ub['RF'], valid_ub.values, digits=3))
 #print(eval_point_pred(Pred_lb['RF'], valid_lb.values, digits=3))
+#%%
+from sklearn.linear_model import Ridge
+
+lr_model = Ridge().fit(train_Pred, train_ub_diff)
+Pred_ub['LR'] = lr_model.predict(valid_Pred) + valid_Pred['value'].values
+
+lr_model = Ridge().fit(train_Pred, train_lb_diff)
+Pred_lb['LR'] = valid_Pred['value'].values - lr_model.predict(valid_Pred)
+#%%
+selected = 'LR'
+output = pd.DataFrame(data = np.column_stack((Pred_ub[selected].values, Pred_lb[selected].values)),
+                      index = valid_Pred['2021-07-01':].index, columns = ['value_max', 'value_min'])
+
+output.to_csv(project_dir+'\\data\\submission\\akylas\\Predictor2.csv')
 
 #%%
+stop_here
+
 selected = 'RF'
 output = pd.DataFrame(data = np.column_stack((Pred_ub[selected].values, Pred_lb[selected].values)),
-                      index = valid_Pred['2021-08-01':].index, columns = ['value_max', 'value_min'])
+                      index = valid_Pred['2021-07-01':].index, columns = ['value_max', 'value_min'])
 
 output.to_csv(project_dir+'\\data\\submission\\akylas\\predictions.csv')
