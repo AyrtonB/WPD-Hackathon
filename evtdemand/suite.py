@@ -60,6 +60,10 @@ def calc_month_error_metrics(
     df_target,
     month: str='2021-08'
 ):
+    common_idxs = pd.DatetimeIndex(sorted(list(set(df_pred.index.intersection(df_target.index.tz_convert(None))))))
+    df_pred, df_target = df_pred.loc[common_idxs], df_target.loc[common_idxs.tz_localize('UTC')]
+    df_pred, df_target = df_pred.drop_duplicates(), df_target.drop_duplicates()
+
     error_metrics = calculate_error_metrics(
         df_target.loc[month, 'value_max'].values,
         df_target.loc[month, 'value_min'].values,
@@ -163,7 +167,8 @@ class ModelSuite:
             'test_size': 0.1,
             'shuffle': False
         },
-        use_target_delta: bool=False
+        use_target_delta: bool=False,
+        fit_shuffle: bool=True
     ):
         X = df_features.values
         y1, y2 = df_target[y1_col].values, df_target[y2_col].values
@@ -175,7 +180,7 @@ class ModelSuite:
 
         for train_index, test_index in train_test_indexes:
             X_train, X_test, y1_train, y1_test, y2_train, y2_test, y_baseline_train, y_baseline_test = X[train_index], X[test_index], y1[train_index], y1[test_index], y2[train_index], y2[test_index], y_baseline[train_index], y_baseline[test_index]
-            self.fit_models(X_train, y1_train, y2_train)
+            self.fit_models(X_train, y1_train, y2_train, shuffle=fit_shuffle)
             y1_pred, y2_pred = self.predict_models(X_test)
 
             if use_target_delta == True:
@@ -198,7 +203,8 @@ class ModelSuite:
         y1_col: str='value_max',
         y2_col: str='value_min',
         save_submission: bool=False,
-        use_target_delta: bool=False
+        use_target_delta: bool=False,
+        shuffle: bool=True
     ):
         X_train = df_train_features.values
         y1_train, y2_train = df_train_target[y1_col].values, df_train_target[y2_col].values
@@ -206,7 +212,7 @@ class ModelSuite:
         submission_index = df_submission_features.index
 
         # should shuffle indexes before doing this
-        self.fit_models(X_train, y1_train, y2_train)
+        self.fit_models(X_train, y1_train, y2_train, shuffle=shuffle)
         y1_submission, y2_submission = self.predict_models(X_submission)
 
         df_pred = construct_prediction_df(y1_submission, y2_submission, submission_index, df_submission_features)
@@ -259,7 +265,10 @@ def run_parameterised_model(
         'features': ['temporal', 'dir_speed', 'hcdh'],#, 'lagged'],
         'sites': ['staplegrove'],
         'grid_points': [1]
-    }
+    },
+    fit_shuffle: bool=True,
+    weights_func=None,
+    resampling_factor=None
 ):
     input_data = locals()
 
@@ -273,8 +282,16 @@ def run_parameterised_model(
     df_features, df_target = feature.create_additional_features(df_features, df_target, **features_kwargs)
     df_features = feature.process_features(df_features, cols_subset=cols_subset)
 
-    common_idxs = df_features.index.intersection(df_target.index)
+    common_idxs = sorted(list(set(df_features.index.intersection(df_target.index))))
     df_features, df_target = df_features.loc[common_idxs], df_target.loc[common_idxs]
+
+    # resampling
+    if weights_func is not None and resampling_factor is not None:
+        resampling_weights = weights_func(df_features)
+        n = int(df_features.shape[0]*resampling_factor)
+        df_features = df_features.sample(n=n, replace=True, weights=resampling_weights)
+        df_features = df_features.sort_index()
+        df_target = df_target.loc[df_features.index]
 
     # model loading
     if isinstance(model_1, str):
@@ -289,7 +306,7 @@ def run_parameterised_model(
         model_1_init, model_2_init = model_1(**model_1_kwargs), None
 
     model_suite = ModelSuite(model_1_init, model_2_init)
-    error_metrics, df_pred = model_suite.run_test(df_target, df_features, y1_col=y1_col, y2_col=y2_col, split_kwargs=split_kwargs, use_target_delta=use_target_delta)
+    error_metrics, df_pred = model_suite.run_test(df_target, df_features, y1_col=y1_col, y2_col=y2_col, split_kwargs=split_kwargs, use_target_delta=use_target_delta, fit_shuffle=fit_shuffle)
 
     return model_suite, error_metrics, df_pred, input_data
 
