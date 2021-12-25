@@ -184,7 +184,8 @@ def create_combined_feature_stats(
 
     return df
 
-def create_demand_stat_features(df_features: pd.DataFrame):
+def create_demand_stat_features(
+    df_features: pd.DataFrame,
     feature_stat_params = [
         {
             'cols': ['value'],
@@ -222,7 +223,7 @@ def create_demand_stat_features(df_features: pd.DataFrame):
             'method_2_kwargs': {}
         }
     ]
-
+):
     df_combined_feature_stats = create_combined_feature_stats(df_features, feature_stat_params)
 
     return df_combined_feature_stats
@@ -330,7 +331,9 @@ def create_lagged_df(
 # Cell
 def creat_demand_ts_pcs(
     df_features: pd.DataFrame,
-    n_features: int=7*48
+    n_features: int=7*48,
+    n_components: int=20,
+    random_state: int=42
 ):
     df_trajectory_mat = df_features['value'].to_frame()
 
@@ -339,7 +342,7 @@ def creat_demand_ts_pcs(
 
     df_trajectory_mat = df_trajectory_mat.dropna()
 
-    pca = PCA(n_components = 20)
+    pca = PCA(n_components=n_components, random_state=random_state)
     pca.fit(df_trajectory_mat)
 
     PCs = pca.fit_transform(df_trajectory_mat)
@@ -426,14 +429,54 @@ def create_additional_features(
     x_dtype: str='float32',
     y_dtype: str='float32',
     cols_subset: list=None,
-    dropna: bool=True
+    dropna: bool=True,
+    n_ts_pca_features: int=7*48,
+    n_ts_pca_components: int=20,
+    random_state: int=42,
+    feature_stat_params: list=[
+        {
+            'cols': ['value'],
+            'method_1': 'ewm',
+            'method_2': 'std',
+            'method_1_kwargs': {'alpha': 0.9},
+            'method_2_kwargs': {}
+        },
+        {
+            'cols': ['value'],
+            'method_1': 'ewm',
+            'method_2': 'mean',
+            'method_1_kwargs': {'alpha': 0.9},
+            'method_2_kwargs': {}
+        },
+        {
+            'cols': ['value'],
+            'method_1': 'ewm',
+            'method_2': 'mean',
+            'method_1_kwargs': {'alpha': 0.01},
+            'method_2_kwargs': {}
+        },
+        {
+            'cols': ['value'],
+            'method_1': 'rolling',
+            'method_2': 'max',
+            'method_1_kwargs': {'window': 12},
+            'method_2_kwargs': {}
+        },
+        {
+            'cols': ['value'],
+            'method_1': 'rolling',
+            'method_2': 'min',
+            'method_1_kwargs': {'window': 24},
+            'method_2_kwargs': {}
+        }
+    ]
 ):
     if 'solar' in features:
         df_solar = create_solar_features(df_features, sites=sites, grid_points=grid_points)
         df_features = df_features.merge(df_solar, left_index=True, right_index=True)
 
     if 'demand' in features:
-        df_features = df_features.merge(create_demand_stat_features(df_features), left_index=True, right_index=True)
+        df_features = df_features.merge(create_demand_stat_features(df_features, feature_stat_params), left_index=True, right_index=True)
 
     if 'temporal' in features:
         df_features = df_features.merge(create_temporal_features(df_features), left_index=True, right_index=True)
@@ -447,7 +490,7 @@ def create_additional_features(
         df_features = df_features.merge(df_hcdh, left_index=True, right_index=True)
 
     if 'ts_pcs' in features:
-        df_features = df_features.merge(creat_demand_ts_pcs(df_features), left_index=True, right_index=True)
+        df_features = df_features.merge(creat_demand_ts_pcs(df_features, n_features=n_ts_pca_features, n_components=n_ts_pca_components, random_state=random_state), left_index=True, right_index=True)
 
     if 'prev_month_stats' in features:
         assert df_target is not None
