@@ -10,7 +10,7 @@ This repository includes the workflow used for submissions to the Western Power 
 You can install the library developed in this work using:
 
 ```bash
-pip install evtdemand
+pip install git+https://github.com/ayrtonb/WPD-Hackathon.git
 ```
 
 <br>
@@ -20,7 +20,9 @@ pip install evtdemand
 
 ##### High-level Overview
 
+This initial challenge aims to understand how accurately high resolution features can be estimated given only information from lower resolution data. Specifically we are asking participants to estimate the highest peak value and lowest trough at a one minute resolution within each half hourly period given only half hourly measurements. This is an interesting problem to a distribution network operator as the spikes in demand can mean strain on their network. Such issues may become increasingly common, especially on the lower voltages of the network, due to the expanding use of lower carbon technologies such as electric vehicles, and heat pumps. However, monitoring can be expensive (especially in the long term) as it requires investment in additional storage, communications equipment and processing units.
 
+More details can be found [here](https://codalab.lisn.upsaclay.fr/competitions/213#learn_the_details).
 
 <br>
 <br>
@@ -38,8 +40,8 @@ The easiest way to set-up your `conda` environment is with the `setup_env.bat` s
 
 ```bash
 > conda env create -f environment.yml
-> conda activate evtdemand
-> ipython kernel install --user --name=evtdemand
+> conda activate wpdhack
+> ipython kernel install --user --name=wpdhack
 ```
 
 
@@ -78,7 +80,3 @@ notebook2script()
 
 <br>
 <br>
-
-### Potential Further Research Questions
-
-* How does the model improve when we can use lagged variables from the previous week or day
