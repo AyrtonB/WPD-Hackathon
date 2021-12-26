@@ -1,4 +1,4 @@
 call cd ..
-call conda activate evtdemand
+call conda activate wpdhack
 call conda env update --file environment.yml
 pause

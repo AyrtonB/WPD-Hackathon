@@ -1,8 +1,8 @@
 from torch import nn, Tensor
 from torch.utils.data import TensorDataset, DataLoader
 from torch.optim import Adam
-from evtdemand import data, feature
-from evtdemand.suite import construct_prediction_df
+from wpdhack import data, feature
+from wpdhack.suite import construct_prediction_df
 import numpy as np
 import pandas as pd
 import torch

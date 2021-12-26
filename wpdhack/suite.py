@@ -13,7 +13,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold, train_test_split
 
-from evtdemand import data, feature
+from wpdhack import data, feature
 
 from tqdm import tqdm
 from random import randint

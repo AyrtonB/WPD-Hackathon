@@ -6,7 +6,7 @@ __all__ = ['test_parameterised_model']
 import os
 import pytest
 
-from evtdemand import suite
+from wpdhack import suite
 
 # Cell
 def test_parameterised_model(params_fp: str='data/params/test.yml'):

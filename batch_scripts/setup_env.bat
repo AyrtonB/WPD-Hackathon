@@ -1,5 +1,5 @@
 call cd ..
 call conda env create -f environment.yml
-call conda activate evtdemand
-call ipython kernel install --user --name=evtdemand
+call conda activate wpdhack
+call ipython kernel install --user --name=wpdhack
 pause
