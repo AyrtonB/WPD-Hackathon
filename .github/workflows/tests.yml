@@ -39,4 +39,4 @@ jobs:
       - name: Running the tests
         shell: bash
         run: |
-          pytest evtdemand/test.py
+          pytest wpdhack/test.py
